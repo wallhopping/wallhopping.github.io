@@ -8,10 +8,16 @@ window.addEventListener("load", async () => {
     // Fetch public IP
     const res = await fetch("https://api64.ipify.org?format=json");
     const data = await res.json();
-    const ip = data.ip;
 
-    // Display IP on the page
-    document.getElementById("myIP").textContent = `Your IP: ${ip}`;
+    // Store the IP in a variable
+    const userIP = data.ip;
+
+    // Display it on the page
+    document.getElementById("myIP").textContent = `Your IP: ${userIP}`;
+
+    // Now you can use `userIP` elsewhere in your script
+    console.log("IP variable:", userIP);
+
   } catch (err) {
     console.error("Error fetching IP:", err);
     document.getElementById("myIP").textContent = "Error fetching IP";
