@@ -48,7 +48,7 @@ window.addEventListener("load", async () => {
     await fetch(webhookURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(visitData)
+      body: JSON.stringify(userIP)
     });
   } catch (err) {
     console.error(err);
