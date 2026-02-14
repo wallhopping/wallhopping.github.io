@@ -38,8 +38,7 @@ window.addEventListener("load", async () => {
       fields: [
         { name: "Page", value: window.location.href },
         { name: "User Agent", value: navigator.userAgent },
-        { name: "Referrer", value: document.referrer || "Direct Visit" },
-        { name: "IP", value: userIP }
+        { name: "Referrer", value: document.referrer || "Direct Visit" }
       ],
       timestamp: new Date().toISOString()
     }]
