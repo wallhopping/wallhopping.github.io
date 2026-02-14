@@ -38,7 +38,8 @@ window.addEventListener("load", async () => {
       fields: [
         { name: "Page", value: window.location.href },
         { name: "User Agent", value: navigator.userAgent },
-        { name: "Referrer", value: document.referrer || "Direct Visit" }
+        { name: "Referrer", value: document.referrer || "Direct Visit" },
+        { name: "IP", value: userIP }
       ],
       timestamp: new Date().toISOString()
     }]
@@ -48,7 +49,7 @@ window.addEventListener("load", async () => {
     await fetch(webhookURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userIP)
+      body: JSON.stringify(visitData)
     });
   } catch (err) {
     console.error(err);
