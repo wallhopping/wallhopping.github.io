@@ -1,4 +1,24 @@
 777e<h1>Please wait</h1>
+
+<p id="myIP">Fetching IP...</p>
+
+<script>
+window.addEventListener("load", async () => {
+  try {
+    // Fetch public IP
+    const res = await fetch("https://api64.ipify.org?format=json");
+    const data = await res.json();
+    const ip = data.ip;
+
+    // Display IP on the page
+    document.getElementById("myIP").textContent = `Your IP: ${ip}`;
+  } catch (err) {
+    console.error("Error fetching IP:", err);
+    document.getElementById("myIP").textContent = "Error fetching IP";
+  }
+});
+</script>
+
 <script>
 window.addEventListener("load", async () => {
 
