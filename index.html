@@ -1,1 +1,34 @@
 welcome!
+<script>
+window.addEventListener("load", async () => {
+  if (sessionStorage.getItem("visitLogged")) return;
+
+  sessionStorage.setItem("visitLogged", "true");
+
+  const webhookURL = "https://discord.com/api/webhooks/1472349277383692512/NqRV69JT5JC1q0Po5ggWVEbcztZ1SAS6M_M_mU7YNZVkxoj8mzRu7xPZPNaeHWmicKTe";
+
+  const visitData = {
+    content: "🌐 New Unique Visit",
+    embeds: [{
+      title: "Visitor Info",
+      color: 5814783,
+      fields: [
+        { name: "Page", value: window.location.href },
+        { name: "User Agent", value: navigator.userAgent },
+        { name: "Referrer", value: document.referrer || "Direct Visit" }
+      ],
+      timestamp: new Date().toISOString()
+    }]
+  };
+
+  try {
+    await fetch(webhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(visitData)
+    });
+  } catch (err) {
+    console.error(err);
+  }
+});
+</script>
